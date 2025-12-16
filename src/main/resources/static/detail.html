@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>文章详情</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+    
+    <link rel="stylesheet" href="1.css">
+    <link rel="stylesheet" href="markdown.css">
+</head>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  },
+  svg: {
+    fontCache: 'global'
+  }
+};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<body>
+
+    <div class="row">
+        <div class="col col-left">
+            <!-- 左侧 -->
+        </div>
+        
+        <div class="col col-middle">
+            <div class="profile">
+                
+                <div class="avatar">
+                        <img src="avatar.png" alt="avatar">
+                </div>
+                <div class="profile-info">
+                    <!-- 这是简介 -->
+                    <div class="username">_wm176</div>
+                    <div class="motto">多少芳华灼灼，多少落英缤纷</div>
+                </div>
+                <div class="nav">
+                <!-- 这里是导航栏 -->
+                <ul>
+                    <li class="nav-item"> <a href="/" style="text-decoration: none;color:inherit;">首页</a> </li>
+                    <li class="nav-item">归档</li>
+                </ul>
+                </div>
+            </div>
+            <hr>
+
+            <div id="post-content">
+                <h1 id="title"></h1>
+                <div id="content"></div>
+            </div> 
+        </div>
+        
+        <div class="col col-right">
+            <!-- 右侧 -->
+            
+        </div>
+    </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script>
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    fetch("article/" + id)
+        .then(response => response.json())
+        .then(res => {
+            const article = res.data;
+            const contentEl = document.getElementById("content");
+            document.getElementById("title").innerText = article.title;
+            document.getElementById("content").innerHTML = marked.parse(article.content);
+            MathJax.typesetPromise([contentEl]);
+            hljs.highlightAll();
+        });
+        
+</script>
+
+</body>
+</html>

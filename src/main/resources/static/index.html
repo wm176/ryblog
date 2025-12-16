@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>博客首页</title>
+    <link rel="stylesheet" href="1.css">
+</head>
+<body>
+   <div class="row">
+    <div class="col col-left">
+        <!-- 左侧 -->
+    </div>
+    
+    <div class="col col-middle">
+        <div class="profile">
+            
+            <div class="avatar">
+                    <img src="avatar.png" alt="avatar">
+            </div>
+            <div class="profile-info">
+                <!-- 这是简介 -->
+                <div class="username">_wm176</div>
+                <div class="motto">多少芳华灼灼，多少落英缤纷</div>
+            </div>
+            <div class="nav">
+               <!-- 这里是导航栏 -->
+               <ul>
+                <li class="nav-item">首页</li>
+                <li class="nav-item">归档</li>
+               </ul>
+            </div>
+        </div>
+
+        <div id="post-content">
+
+        </div> 
+    </div>
+    
+    <div class="col col-right">
+        <!-- 右侧 -->
+        
+    </div>
+  </div>
+
+</body>
+</html>
+<script>
+fetch("/article/list")
+    .then(res => res.json())
+    .then(res => {
+        const div = document.getElementById("post-content");
+
+        res.data.forEach(article => {
+            div.innerHTML += `
+                <div class="post">
+                    <a href="detail.html?id=${article.id}">
+                        <div class="post-title"> ${article.title}</div>
+                    </a>
+                    <div class="post-content">${stripMarkdown(article.content)}</div>
+                    <div class="post-date">写于 ${new Date(article.createTime).toLocaleDateString()}</div>
+                </div>
+            `;
+        });
+    });
+    function stripMarkdown(md) {
+        return md
+            // 1️⃣ 先删块级公式 $$...$$（最重要，必须最前）
+            .replace(/\$\$[\s\S]*?\$\$/g, "")
+            // 2️⃣ 再删行内公式 $...$
+            .replace(/\$[^$]*\$/g, "")
+            // 3️⃣ 删代码块 ``` ```
+            .replace(/```[\s\S]*?```/g, "")
+            // 4️⃣ 删 markdown 符号
+            .replace(/[#>*_`~\-]/g, "")
+            // 5️⃣ 合并空白
+            .replace(/\n+/g, " ")
+            .trim();
+    }
+
+</script>

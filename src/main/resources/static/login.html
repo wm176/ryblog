@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员登录</title>
+    <style>
+        .login-box {
+            width: 360px;
+            margin: 120px auto;
+            padding: 30px;
+            background: #fbfbfb;
+            border: 1px solid #eee;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 12px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-box">
+    <h2>管理员登录</h2>
+    <input id="username" placeholder="用户名">
+    <input id="password" type="password" placeholder="密码">
+    <button onclick="login()">登录</button>
+</div>
+
+<script>
+function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    fetch("/auth/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            
+        },
+        body: JSON.stringify({ username, password })
+    })
+    
+    .then(res => res.json())
+    .then(res => {
+        if (res.code === 200) {
+            localStorage.setItem("token", res.data);
+            location.href = "admin.html";
+        } else {
+            alert(res.msg);
+        }
+    });
+}
+</script>
+
+</body>
+</html>

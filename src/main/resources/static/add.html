@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>发布文章</title>
+
+    <!-- Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- MathJax 配置（必须在脚本前） -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+
+    <!-- MathJax -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <!-- highlight.js（和 detail 一致） -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+
+    <!-- 复用 detail 的样式 -->
+    <link rel="stylesheet" href="1.css">
+    <link rel="stylesheet" href="markdown.css">
+
+    <!-- 编辑页补充样式 -->
+    <style>
+        .editor-page {
+            padding: 20px 10px;
+        }
+
+        .post-title-input {
+            width: 100%;
+            font-size: 28px;
+            font-weight: bold;
+            border: none;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        .post-editor {
+            width: 100%;
+            height: 300px;
+            font-size: 16px;
+            line-height: 1.6;
+            padding: 10px;
+            box-sizing: border-box;
+            font-family: Consolas, monospace;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .publish-btn {
+            margin-top: 20px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .preview {
+            margin-top: 40px;
+        }
+
+        .preview-content {
+            padding: 20px;
+            /* background: #fafafa; */
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="row">
+    <div class="col col-left">
+        <!-- 左侧 -->
+    </div>
+
+    <div class="col col-middle">
+        <!-- 个人信息（完全复用 detail.html） -->
+        <div class="profile">
+            <div class="avatar">
+                <img src="avatar.png" alt="avatar">
+            </div>
+            <div class="profile-info">
+                <div class="username">_wm176</div>
+                <div class="motto">多少芳华灼灼，多少落英缤纷</div>
+            </div>
+            <div class="nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="/" style="text-decoration:none;color:inherit;">首页</a>
+                    </li>
+                    <li class="nav-item">归档</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- 编辑区（替代 detail 的文章内容） -->
+        <div id="post-content" class="editor-page">
+
+            <input id="title"
+                   class="post-title-input"
+                   placeholder="请输入文章标题">
+
+            <textarea id="edit-content"
+                      class="post-editor"
+                      placeholder="请输入 Markdown 内容"></textarea>
+
+            <button class="publish-btn" onclick="submitArticle()">发布</button>
+
+            <div class="preview">
+                <h2>预览</h2>
+                <div id="content" class="preview-content"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col col-right">
+        <!-- 右侧 -->
+    </div>
+</div>
+
+<script>
+    const textarea = document.getElementById("edit-content");
+    const preview = document.getElementById("content");
+
+    textarea.addEventListener("input", () => {
+        preview.innerHTML = marked.parse(textarea.value);
+
+        MathJax.typesetPromise([preview]).then(() => {
+            hljs.highlightAll();
+        });
+    });
+
+    function submitArticle() {
+        const title = document.getElementById("title").value.trim();
+        const content = textarea.value.trim();
+
+        if (!title) {
+            alert("标题不能为空");
+            return;
+        }
+        if (!content) {
+            alert("内容不能为空");
+            return;
+        }
+
+        fetch("article/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ title, content })
+        })
+        .then(res => res.json())
+        .then(() => {
+            alert("发布成功！");
+            window.location.href = "/";
+        })
+        .catch(() => {
+            alert("发布失败");
+        });
+    }
+</script>
+
+</body>
+</html>

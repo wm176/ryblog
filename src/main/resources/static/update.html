@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑文章</title>
+
+    <!-- Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$']]
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <!-- highlight.js -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+
+    <link rel="stylesheet" href="1.css">
+    <link rel="stylesheet" href="markdown.css">
+
+    <style>
+        .editor-page {
+            padding: 20px 10px;
+        }
+
+        .post-title-input {
+            width: 100%;
+            font-size: 28px;
+            font-weight: bold;
+            border: none;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        .post-editor {
+            width: 100%;
+            height: 320px;
+            font-size: 16px;
+            line-height: 1.6;
+            padding: 10px;
+            font-family: Consolas, monospace;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn {
+            margin-top: 20px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .preview {
+            margin-top: 40px;
+        }
+
+        .preview-content {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="row">
+    <div class="col col-left"></div>
+
+    <div class="col col-middle">
+        <div id="post-content" class="editor-page">
+
+            <input id="title"
+                   class="post-title-input"
+                   placeholder="请输入文章标题">
+
+            <textarea id="edit-content"
+                      class="post-editor"
+                      placeholder="请输入 Markdown 内容"></textarea>
+
+            <button class="btn" onclick="updateArticle()">更新文章</button>
+
+            <div class="preview">
+                <h2>预览</h2>
+                <div id="content" class="preview-content"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col col-right"></div>
+</div>
+
+<script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+
+    const titleInput = document.getElementById("title");
+    const textarea = document.getElementById("edit-content");
+    const preview = document.getElementById("content");
+
+    if (!id) {
+        alert("缺少文章 ID");
+        location.href = "/";
+    }
+
+    // 1️⃣ 加载文章内容
+    fetch(`/article/${id}`)
+        .then(res => res.json())
+        .then(res => {
+            titleInput.value = res.data.title;
+            textarea.value = res.data.content;
+            renderPreview();
+        });
+
+    // 2️⃣ 实时预览
+    textarea.addEventListener("input", renderPreview);
+
+    function renderPreview() {
+        preview.innerHTML = marked.parse(textarea.value);
+        MathJax.typesetPromise([preview]).then(() => {
+            hljs.highlightAll();
+        });
+    }
+
+    // 3️⃣ 更新文章
+    function updateArticle() {
+        const title = titleInput.value.trim();
+        const content = textarea.value.trim();
+
+        if (!title || !content) {
+            alert("标题和内容不能为空");
+            return;
+        }
+
+        fetch("/article/update", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id,
+                title,
+                content
+            })
+        })
+        .then(res => res.json())
+        .then(() => {
+            alert("更新成功！");
+            location.href = `detail.html?id=${id}`;
+        })
+        .catch(() => {
+            alert("更新失败");
+        });
+    }
+</script>
+
+</body>
+</html>
