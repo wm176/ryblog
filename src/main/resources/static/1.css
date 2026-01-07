@@ -43,6 +43,7 @@ html, body {
     margin-bottom: 10px;
 }
 
+
 .post-title:hover {
     color: #dc4d52;
     cursor: pointer;
@@ -69,6 +70,7 @@ html, body {
     overflow: hidden;
     display: -webkit-box;
 }
+
 
 .avatar {
     flex: 0 0 auto;     /* 不参与拉伸 */
@@ -130,10 +132,34 @@ html, body {
     color: #dc4d52;
     transition: 0.3s;
 }
+
+
+.post .post-tags .post-tag {
+    display: inline-block;
+    font-size: 16px;
+    color: #939393;
+    margin-right: 10px;
+}
+.post .post-tags .post-tag:hover {
+    color: #dc4d52;
+    cursor: pointer;
+    transition: 0.3s;
+}
 .post-date {
     text-align: right;
     font-family: "Kaiti SC";
     font-size: 16px;
     color: #9d9b9b;
-    margin: 20px;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;  
+    margin-top: 5px;
+}
+
+.post-tags {
+    display: flex;
+    gap: 8px;
 }

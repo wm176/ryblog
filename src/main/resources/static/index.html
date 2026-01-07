@@ -45,23 +45,48 @@
 </body>
 </html>
 <script>
-fetch("/article/list")
+    fetch("/article/list")
     .then(res => res.json())
     .then(res => {
         const div = document.getElementById("post-content");
+        div.innerHTML = "";
 
         res.data.forEach(article => {
+
+            // 生成标签 HTML
+            const tagsHtml = (article.tags && article.tags.length > 0)
+                ? article.tags.map(tag => `
+                    <a href="tag.html?slug=${tag.slug}" class="post-tag">
+                        ${tag.name}
+                    </a>
+                `).join("")
+                : "";
+
             div.innerHTML += `
                 <div class="post">
                     <a href="detail.html?id=${article.id}">
-                        <div class="post-title"> ${article.title}</div>
+                        <div class="post-title">${article.title}</div>
                     </a>
-                    <div class="post-content">${stripMarkdown(article.content)}</div>
-                    <div class="post-date">写于 ${new Date(article.createTime).toLocaleDateString()}</div>
+
+                    <div class="post-content">
+                        ${stripMarkdown(article.content)}
+                    </div>
+    
+                    <div class="post-meta">
+                        <div class="post-tags">
+                            ${tagsHtml}
+                        </div>
+
+                        <div class="post-date">
+                            写于 ${new Date(article.createTime).toLocaleDateString()}
+                        </div>
+                    </div>
                 </div>
             `;
         });
     });
+
+    
     function stripMarkdown(md) {
         return md
             // 1️⃣ 先删块级公式 $$...$$（最重要，必须最前）
