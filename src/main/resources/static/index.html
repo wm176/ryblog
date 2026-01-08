@@ -9,6 +9,9 @@
    <div class="row">
     <div class="col col-left">
         <!-- 左侧 -->
+         <div id="tag-list">
+            111111111111111111
+         </div>
     </div>
     
     <div class="col col-middle">
@@ -102,4 +105,66 @@
             .trim();
     }
 
+</script>
+<script>
+fetch("/tags/list")
+    .then(res => res.json())
+    .then(res => {
+        const tagList = document.getElementById("tag-list");
+        tagList.innerHTML = "";
+
+        res.data.forEach(tag => {
+            tagList.innerHTML += `
+                <div class="tag-item" data-id="${tag.id}">
+                    <div class="tag-name">#${tag.name}</div>
+                    <div class="tag-articles"></div>
+                </div>
+            `;
+        });
+
+        bindTagClick();
+    });
+
+function bindTagClick() {
+    document.querySelectorAll(".tag-name").forEach(el => {
+        el.addEventListener("click", () => {
+            const tagItem = el.parentElement;
+            const tagId = tagItem.dataset.id;
+            const articlesBox = tagItem.querySelector(".tag-articles");
+
+            // 如果已经展开 → 收起
+            if (tagItem.classList.contains("open")) {
+                tagItem.classList.remove("open");
+                return;
+            }
+
+            // 如果还没加载过文章 → 请求接口
+            if (articlesBox.childElementCount === 0) {
+                fetch(`/tags/${tagId}`)
+                    .then(res => res.json())
+                    .then(res => {
+                        articlesBox.innerHTML = "";
+
+                        if (!res.data || res.data.length === 0) {
+                            articlesBox.innerHTML = "<div class='tag-article'>暂无文章</div>";
+                        } else {
+                            res.data.forEach(article => {
+                                articlesBox.innerHTML += `
+                                    <a class="tag-article"
+                                       href="detail.html?id=${article.id}">
+                                        ${article.title}
+                                    </a>
+                                `;
+                            });
+                        }
+
+                        tagItem.classList.add("open");
+                    });
+            } else {
+                // 已加载过，直接展开
+                tagItem.classList.add("open");
+            }
+        });
+    });
+}
 </script>

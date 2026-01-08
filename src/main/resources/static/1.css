@@ -14,6 +14,7 @@ html, body {
     flex: 2;
     background: #f0f0f0;
     z-index: 1;
+    padding-top: 140px;
 }
 
 .col-middle {
@@ -162,4 +163,51 @@ html, body {
 .post-tags {
     display: flex;
     gap: 8px;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+/* 左栏标签块 */
+.tag-item {
+    text-align: center;
+}
+
+/* 标签名 */
+.tag-name {
+    cursor: pointer;
+    font-size: 20px;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    color: #aaa;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: 0.5s;
+}
+
+.tag-name:hover {
+    color: #dc4d52;
+    background-color: #e6e6e6;
+    
+}
+
+/* 文章列表：默认隐藏 */
+.tag-articles {
+    margin-left: 12px;
+    margin-top: 6px;
+    display: none;
+}
+
+/* 展开状态 */
+.tag-item.open .tag-articles {
+    display: block;
+}
+
+/* 文章标题 */
+.tag-article {
+    display: block;
+    font-size: 13px;
+    color: #777;
+    padding: 3px 0;
+    text-decoration: none;
+}
+
+.tag-article:hover {
+    color: #fff;
 }

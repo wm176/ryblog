@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.yinruiyang.ryblog.entity.Article;
+import com.yinruiyang.ryblog.entity.Tag;
 import com.yinruiyang.ryblog.dao.TagsDao;
 
 @SpringBootTest
@@ -18,13 +19,7 @@ class test {
 
     @Test
     void print() {
-        System.out.println("-------------------");
-        System.out.println("test");
-        List<Article> articles = tagsDao.selectArticlesByTagId(1);
-        List <String> articleTitles = new ArrayList<>();
-        for (Article article : articles) {
-            articleTitles.add(article.getTitle());
-        }
-        System.out.println(articleTitles);
+        List<Tag> tags = tagsDao.selectAll();
+        System.out.println(tags);
     }
 }
