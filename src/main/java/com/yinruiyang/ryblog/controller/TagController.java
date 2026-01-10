@@ -34,6 +34,4 @@ public class TagController {
         List<Article> articles = tagsDao.selectArticlesByTagId(id);
         return Result.success(articles);
     }
-
-    
 }
